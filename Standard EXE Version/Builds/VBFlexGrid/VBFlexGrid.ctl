@@ -2088,6 +2088,7 @@ Private PropSingleLine As Boolean
 Private PropEllipsisFormat As FlexEllipsisFormatConstants
 Private PropEllipsisFormatFixed As FlexEllipsisFormatConstants
 Private PropMimicTextBox As Boolean
+Private PropUseForeColorSel As Boolean
 Private PropRedraw As Boolean
 Private PropDoubleBuffer As Boolean
 Private PropTabBehavior As FlexTabBehaviorConstants
@@ -2429,6 +2430,7 @@ PropSingleLine = False
 PropEllipsisFormat = FlexEllipsisFormatNone
 PropEllipsisFormatFixed = FlexEllipsisFormatNone
 PropMimicTextBox = False
+PropUseForeColorSel = True
 PropRedraw = True
 PropDoubleBuffer = True
 PropTabBehavior = FlexTabControls
@@ -2547,6 +2549,7 @@ PropSingleLine = .ReadProperty("SingleLine", False)
 PropEllipsisFormat = .ReadProperty("EllipsisFormat", FlexEllipsisFormatNone)
 PropEllipsisFormatFixed = .ReadProperty("EllipsisFormatFixed", FlexEllipsisFormatNone)
 PropMimicTextBox = .ReadProperty("MimicTextBox", False)
+PropUseForeColorSel = .ReadProperty("UseForeColorSel", True)
 PropRedraw = .ReadProperty("Redraw", True)
 PropDoubleBuffer = .ReadProperty("DoubleBuffer", True)
 PropTabBehavior = .ReadProperty("TabBehavior", FlexTabControls)
@@ -2661,6 +2664,7 @@ With PropBag
 .WriteProperty "EllipsisFormat", PropEllipsisFormat, FlexEllipsisFormatNone
 .WriteProperty "EllipsisFormatFixed", PropEllipsisFormatFixed, FlexEllipsisFormatNone
 .WriteProperty "MimicTextBox", PropMimicTextBox, False
+.WriteProperty "UseForeColorSel", PropUseForeColorSel, True
 .WriteProperty "Redraw", PropRedraw, True
 .WriteProperty "DoubleBuffer", PropDoubleBuffer, True
 .WriteProperty "TabBehavior", PropTabBehavior, FlexTabControls
@@ -5036,6 +5040,17 @@ Public Property Let MimicTextBox(ByVal Value As Boolean)
 PropMimicTextBox = Value
 Call RedrawGrid
 UserControl.PropertyChanged "MimicTextBox"
+End Property
+
+Public Property Get UseForeColorSel() As Boolean
+Attribute UseForeColorSel.VB_Description = "Returns/sets a value which determines if the flex grid control will use the foreground color of the selected cells."
+UseForeColorSel = PropUseForeColorSel
+End Property
+
+Public Property Let UseForeColorSel(ByVal Value As Boolean)
+PropUseForeColorSel = Value
+Call RedrawGrid
+UserControl.PropertyChanged "UseForeColorSel"
 End Property
 
 Public Property Get Redraw() As Boolean
@@ -16843,7 +16858,7 @@ If Checked > -1 Then
     End Select
 End If
 Dim OldTextColor As Long
-If Not (ItemState And ODS_SELECTED) = ODS_SELECTED Or (ItemState And ODS_FOCUS) = ODS_FOCUS Then
+If Not (ItemState And ODS_SELECTED) = ODS_SELECTED Or (ItemState And ODS_FOCUS) = ODS_FOCUS Or PropUseForeColorSel = False Then
     If Not Text = vbNullString Then
         If .ForeColor = -1 Then
             OldTextColor = SetTextColor(hDC, WinColor(PropForeColorFixed))
@@ -17030,7 +17045,7 @@ If VBFlexGridColsInfo(iCol).SortArrow <> FlexSortArrowNone And iRow = PropRowSor
             SortArrowPoints(2).Y = SortArrowPoints(2).Y + SortArrowVSpace
         End If
         Dim SortArrowColor As Long
-        If Not (ItemState And ODS_SELECTED) = ODS_SELECTED Or (ItemState And ODS_FOCUS) = ODS_FOCUS Then
+        If Not (ItemState And ODS_SELECTED) = ODS_SELECTED Or (ItemState And ODS_FOCUS) = ODS_FOCUS Or PropUseForeColorSel = False Then
             If VBFlexGridColsInfo(iCol).SortArrowColor = -1 Then
                 SortArrowColor = WinColor(PropSortArrowColor)
             Else
@@ -17695,7 +17710,7 @@ If Checked > -1 Then
     End Select
 End If
 Dim OldTextColor As Long
-If Not (ItemState And ODS_SELECTED) = ODS_SELECTED Or (ItemState And ODS_FOCUS) = ODS_FOCUS Then
+If Not (ItemState And ODS_SELECTED) = ODS_SELECTED Or (ItemState And ODS_FOCUS) = ODS_FOCUS Or PropUseForeColorSel = False Then
     If Not Text = vbNullString Then
         If .ForeColor = -1 Then
             OldTextColor = SetTextColor(hDC, WinColor(PropForeColor))
