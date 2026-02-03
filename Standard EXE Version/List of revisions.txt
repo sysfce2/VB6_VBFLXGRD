@@ -1,5 +1,8 @@
 List of revisions:
 
+03-Feb-2026
+- Cell flooding now has a padding in the size of the focus rect.
+
 01-Feb-2026
 - Included the UseForeColorSel property which defaults to True.
 
