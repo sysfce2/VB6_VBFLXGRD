@@ -6960,17 +6960,10 @@ End Property
 Public Sub AddItem(ByVal Item As String, Optional ByVal Index As Variant)
 Attribute AddItem.VB_Description = "Adds an item to the flex grid."
 Dim IndexLong As Long
-If IsMissing(Index) = True Then
+If IsMissing(Index) Then
     IndexLong = PropRows
 Else
-    Select Case VarType(Index)
-        Case vbLong, vbInteger, vbByte
-            IndexLong = Index
-        Case vbDouble, vbSingle, vbString
-            IndexLong = CLng(Index)
-        Case Else
-            Err.Raise 13
-    End Select
+    IndexLong = Index
 End If
 If IndexLong > -1 And IndexLong < PropFixedRows Then
     Err.Raise Number:=30001, Description:="Cannot use AddItem on a fixed row"
@@ -16635,8 +16628,21 @@ Else
     SelectObject hDC, Brush
 End If
 If .FloodPercent <> 0 Then
+    Dim FloodRect As RECT
+    With FloodRect
+    .Left = CellRect.Left + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CX + VBFlexGridFocusBorder.CX
+    .Top = CellRect.Top + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CY + VBFlexGridFocusBorder.CY
+    .Right = CellRect.Right - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CX - VBFlexGridFocusBorder.CX
+    .Bottom = CellRect.Bottom - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CY - VBFlexGridFocusBorder.CY
+    If PropFocusRect = FlexFocusRectHeavy Then
+        .Left = .Left + VBFlexGridFocusBorder.CX
+        .Top = .Top + VBFlexGridFocusBorder.CY
+        .Right = .Right - VBFlexGridFocusBorder.CX
+        .Bottom = .Bottom - VBFlexGridFocusBorder.CY
+    End If
+    End With
     If .FloodColor = -1 Then Color = WinColor(PropFloodColor) Else Color = WinColor(.FloodColor)
-    Call DrawCellFlooding(hDC, CellRect, .FloodPercent, Color)
+    Call DrawCellFlooding(hDC, FloodRect, .FloodPercent, Color)
 End If
 Dim hRgnOld As LongPtr
 If Not .Picture Is Nothing Then
@@ -17494,8 +17500,21 @@ Else
     SelectObject hDC, Brush
 End If
 If .FloodPercent <> 0 Then
+    Dim FloodRect As RECT
+    With FloodRect
+    .Left = CellRect.Left + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CX + VBFlexGridFocusBorder.CX
+    .Top = CellRect.Top + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CY + VBFlexGridFocusBorder.CY
+    .Right = CellRect.Right - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CX - VBFlexGridFocusBorder.CX
+    .Bottom = CellRect.Bottom - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CY - VBFlexGridFocusBorder.CY
+    If PropFocusRect = FlexFocusRectHeavy Then
+        .Left = .Left + VBFlexGridFocusBorder.CX
+        .Top = .Top + VBFlexGridFocusBorder.CY
+        .Right = .Right - VBFlexGridFocusBorder.CX
+        .Bottom = .Bottom - VBFlexGridFocusBorder.CY
+    End If
+    End With
     If .FloodColor = -1 Then Color = WinColor(PropFloodColor) Else Color = WinColor(.FloodColor)
-    Call DrawCellFlooding(hDC, CellRect, .FloodPercent, Color)
+    Call DrawCellFlooding(hDC, FloodRect, .FloodPercent, Color)
 End If
 Dim hRgnOld As LongPtr
 If Not .Picture Is Nothing Then
@@ -24720,19 +24739,19 @@ If Checked > -1 Then
 End If
 End Sub
 
-Private Sub DrawCellFlooding(ByVal hDC As LongPtr, ByRef CellRect As RECT, ByVal Percent As Integer, ByVal Color As Long)
+Private Sub DrawCellFlooding(ByVal hDC As LongPtr, ByRef FloodRect As RECT, ByVal Percent As Integer, ByVal Color As Long)
 If hDC = NULL_PTR Then Exit Sub
 Dim RC As RECT, OldColor As Long
-RC.Top = CellRect.Top
-RC.Bottom = CellRect.Bottom
+RC.Top = FloodRect.Top
+RC.Bottom = FloodRect.Bottom
 OldColor = SetBkColor(hDC, Color)
 If Percent > 0 Then
-    RC.Left = CellRect.Left
-    RC.Right = CellRect.Left + ((CellRect.Right - CellRect.Left) * (Percent / 100#))
+    RC.Left = FloodRect.Left
+    RC.Right = FloodRect.Left + ((FloodRect.Right - FloodRect.Left) * (Percent / 100#))
     ExtTextOut hDC, 0, 0, ETO_OPAQUE, RC, NULL_PTR, 0, NULL_PTR
 ElseIf Percent < 0 Then
-    RC.Left = CellRect.Right - ((CellRect.Right - CellRect.Left) * (-Percent / 100#))
-    RC.Right = CellRect.Right
+    RC.Left = FloodRect.Right - ((FloodRect.Right - FloodRect.Left) * (-Percent / 100#))
+    RC.Right = FloodRect.Right
     ExtTextOut hDC, 0, 0, ETO_OPAQUE, RC, NULL_PTR, 0, NULL_PTR
 End If
 SetBkColor hDC, OldColor
