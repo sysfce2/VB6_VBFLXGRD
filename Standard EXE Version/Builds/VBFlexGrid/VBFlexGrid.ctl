@@ -16633,13 +16633,14 @@ If .FloodPercent <> 0 Then
     .Left = CellRect.Left + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CX + VBFlexGridFocusBorder.CX
     .Top = CellRect.Top + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CY + VBFlexGridFocusBorder.CY
     .Right = CellRect.Right - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CX - VBFlexGridFocusBorder.CX
-    .Bottom = CellRect.Bottom - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CY - VBFlexGridFocusBorder.CY
-    If PropFocusRect = FlexFocusRectHeavy Then
-        .Left = .Left + VBFlexGridFocusBorder.CX
-        .Top = .Top + VBFlexGridFocusBorder.CY
-        .Right = .Right - VBFlexGridFocusBorder.CX
-        .Bottom = .Bottom - VBFlexGridFocusBorder.CY
+    If ComboCueWidth > 0 Then
+        If ComboCueAlignment = FlexLeftRightAlignmentRight Then
+            .Right = .Right - ComboCueWidth
+        ElseIf ComboCueAlignment = FlexLeftRightAlignmentLeft Then
+            .Left = .Left + ComboCueWidth
+        End If
     End If
+    .Bottom = CellRect.Bottom - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CY - VBFlexGridFocusBorder.CY
     End With
     If .FloodColor = -1 Then Color = WinColor(PropFloodColor) Else Color = WinColor(.FloodColor)
     Call DrawCellFlooding(hDC, FloodRect, .FloodPercent, Color)
@@ -17505,13 +17506,14 @@ If .FloodPercent <> 0 Then
     .Left = CellRect.Left + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CX + VBFlexGridFocusBorder.CX
     .Top = CellRect.Top + VBFlexGridDrawInfo.GridLineOffsets.LeftTop.CY + VBFlexGridFocusBorder.CY
     .Right = CellRect.Right - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CX - VBFlexGridFocusBorder.CX
-    .Bottom = CellRect.Bottom - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CY - VBFlexGridFocusBorder.CY
-    If PropFocusRect = FlexFocusRectHeavy Then
-        .Left = .Left + VBFlexGridFocusBorder.CX
-        .Top = .Top + VBFlexGridFocusBorder.CY
-        .Right = .Right - VBFlexGridFocusBorder.CX
-        .Bottom = .Bottom - VBFlexGridFocusBorder.CY
+    If ComboCueWidth > 0 Then
+        If ComboCueAlignment = FlexLeftRightAlignmentRight Then
+            .Right = .Right - ComboCueWidth
+        ElseIf ComboCueAlignment = FlexLeftRightAlignmentLeft Then
+            .Left = .Left + ComboCueWidth
+        End If
     End If
+    .Bottom = CellRect.Bottom - VBFlexGridDrawInfo.GridLineOffsets.RightBottom.CY - VBFlexGridFocusBorder.CY
     End With
     If .FloodColor = -1 Then Color = WinColor(PropFloodColor) Else Color = WinColor(.FloodColor)
     Call DrawCellFlooding(hDC, FloodRect, .FloodPercent, Color)
